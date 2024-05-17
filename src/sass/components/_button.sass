@@ -1,0 +1,35 @@
+@mixin button-with-shadow($bg-color: #3498db)
+    $r: red($bg-color)
+    $g: green($bg-color)
+    $b: blue($bg-color)
+    background-color: $bg-color
+    box-shadow: 0 4px 6px rgba($r, $g, $b, 0.3)
+    border: none
+    color: white
+    padding: 0.5rem 1.5rem
+    text-align: center
+    text-decoration: none
+    display: inline-block
+    font-size: 1rem
+    margin: 1rem
+    cursor: pointer
+    border-radius: 0.25rem
+    transition: box-shadow 0.3s ease-in-out
+
+    &:hover 
+        box-shadow: 0 6px 8px rgba($r, $g, $b, 0.5)
+
+    &:active 
+        box-shadow: 0 2px 4px rgba($r, $g, $b, 0.2)
+
+.btn-blue
+    @include button-with-shadow(#3498db)
+
+.btn-red
+    @include button-with-shadow(#e74c3c)
+
+.btn-green
+    @include button-with-shadow(#2ecc71)
+
+.btn-gray
+    @include button-with-shadow(#808080)

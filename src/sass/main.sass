@@ -1,0 +1,56 @@
+@use 'base/base.sass'
+@use './components/components.sass'
+
+@mixin container
+  max-width: 1280px
+  margin: 0 auto
+  padding-inline: 2rem
+  width: 100%
+
+@mixin box-shadow
+  border: 1px solid var(--color-border)
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05)
+
+body
+  display: flex
+  justify-content: center
+  width: 100%
+  background-color: var(--color-background-soft)
+
+#app
+  display: flex
+  flex-direction: column
+  align-items: center
+  @include container
+  > *
+    margin-bottom: 0.5rem
+    background-color: var(--color-background)
+    @include box-shadow
+  
+  main
+    padding-inline: 1rem
+    padding-block: 1rem
+    width: 100%
+
+a, .green
+  text-decoration: none
+  color: hsla(160, 100%, 37%, 1)
+  transition: 0.4s
+  padding: 3px
+
+
+@media (hover: hover)
+  a:hover
+    background-color: hsla(160, 100%, 37%, 0.2)
+
+// @media (min-width: 1024px)
+
+//   #app
+//     display: grid
+//     grid-template-columns: 1fr 1fr
+//     padding: 0 2rem
+//     gap: 2rem
+
+@media (max-width: 1024px)
+  #app
+    padding-inline: 0.5rem
