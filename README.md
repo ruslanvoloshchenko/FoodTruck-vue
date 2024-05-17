@@ -14,16 +14,15 @@ This repository contains a minimal boilerplate for starting a new Vue 3 project.
 
 ## Dev Dependecies
 
-[Node 21.7.3]: https://nodejs.org/
+[Node 21.7.3](https://nodejs.org/)
 
 ## Stack
 
-[Vue 3.4]: https://vuejs.org/
-[Vue-Router 4.3]: https://router.vuejs.org/
-[Vite 5.2]: https://vitejs.dev/
-[Sass 1.77]: https://sass-lang.com/
-[Normalize.css 8.0]: https://necolas.github.io/normalize.css/
-
+[Vue 3.4](https://vuejs.org/)  
+[Vue-Router 4.3](https://router.vuejs.org/)  
+[Vite 5.2](https://vitejs.dev/)  
+[Sass 1.77](https://sass-lang.com/)  
+[Normalize.css 8.0](https://necolas.github.io/normalize.css/)  
 eslint  
 prettier
 
