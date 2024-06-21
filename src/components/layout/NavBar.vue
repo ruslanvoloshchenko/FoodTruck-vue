@@ -1,13 +1,13 @@
 <template>
   <header class="mt-1">
     <nav>
-      <router-link to="/">Menu 1</router-link>
-      <router-link to="/about">Menu 2</router-link>
-      <router-link to="/Other">Menu 3</router-link>
+      <router-link v-for="menu in menus" :to="`/?id=${menu}`">
+        <span :class="state.selMenu == menu ? 'active' : ''">{{ menu }}</span>
+      </router-link>
     </nav>
     <div>
-      <button class="btn-red mr-1" @click="handleSave">Save</button>
-      <button class="btn-green mr-1" @click="showAddModal=true">Add</button>
+      <button v-if="isDraggable" class="btn-red mr-1" @click="handleSave">Save</button>
+      <button v-if="isDraggable" class="btn-green mr-1" @click="showAddModal=true">Add</button>
       <button class="btn-blue" @click="showModal=true">Setting</button>
     </div>
   </header>
@@ -15,62 +15,222 @@
     <div class="setting">
       <div><h1>Add New Items</h1></div>
       <div class="item">
-        <div class="item-label">Title 1:</div>
-        <div class="item-body"><input v-model="state.item.title1"/></div>
+        <div class="item-label">Type:</div>
+        <div class="item-body">
+          <select v-model="state.item.type" @change="handleChangeType">
+            <option value="social">Social</option>
+            <option value="item">Food</option>
+            <option value="logo">Logo</option>
+            <option value="banner">Banner</option>
+            <option value="marquee">Marquee</option>
+            <option value="image">Image</option>
+            <option value="menu">Menu</option>
+          </select>
+        </div>
       </div>
-      <div class="item">
-        <div class="item-label">Title 2:</div>
-        <div class="item-body"><input v-model="state.item.title2"/></div>
+      <div v-if="state.item.type != 'menu'">
+        <div v-if="state.item.type == 'image'" class="item">
+          <div class="item-label">Image File:</div>
+          <div class="item-body"><ImageUpload :filename="state.item.img_name"/></div>
+        </div>
+
+        <!-- Banner Start -->
+        <div v-if="state.item.type == 'banner'" class="item">
+          <div class="item-label">Banner:</div>
+          <div class="item-body"><input v-model="state.item.banner.content"/></div>
+        </div>
+        <div v-if="state.item.type == 'banner'" class="item">
+          <div class="item-label">Font Size:</div>
+          <div class="item-body"><input v-model="state.item.banner.fontSize"/></div>
+        </div>
+        <div v-if="state.item.type == 'banner'" class="item">
+          <div class="item-label">Font Weight:</div>
+          <div class="item-body"><input v-model="state.item.banner.fontWeight"/></div>
+        </div>
+        <div v-if="state.item.type == 'banner'" class="item">
+          <div class="item-label">Font Family:</div>
+          <div class="item-body"><input v-model="state.item.banner.fontFamily"/></div>
+        </div>
+        <div v-if="state.item.type == 'banner'" class="item">
+          <div class="item-label">Font Color:</div>
+          <div class="item-body"><input v-model="state.item.banner.fontColor"/></div>
+        </div>
+        <!-- Banner End -->
+      
+        <!-- Marquee Start -->
+        <div v-if="state.item.type == 'marquee'" class="item">
+          <div class="item-label">Content:</div>
+          <div class="item-body"><input v-model="state.item.marquee.content"/></div>
+        </div>
+        <div v-if="state.item.type == 'marquee'" class="item">
+          <div class="item-label">Font Size:</div>
+          <div class="item-body"><input v-model="state.item.marquee.fontSize"/></div>
+        </div>
+        <div v-if="state.item.type == 'marquee'" class="item">
+          <div class="item-label">Font Weight:</div>
+          <div class="item-body"><input v-model="state.item.marquee.fontWeight"/></div>
+        </div>
+        <div v-if="state.item.type == 'marquee'" class="item">
+          <div class="item-label">Font Family:</div>
+          <div class="item-body"><input v-model="state.item.marquee.fontFamily"/></div>
+        </div>
+        <div v-if="state.item.type == 'marquee'" class="item">
+          <div class="item-label">Font Color:</div>
+          <div class="item-body"><input v-model="state.item.marquee.fontColor"/></div>
+        </div>
+        <!-- Marquee End -->
+
+        <div v-if="state.item.type == 'logo'" class="item">
+          <div class="item-label">Contact:</div>
+          <div class="item-body"><input v-model="state.item.phonenumber"/></div>
+        </div>
+
+        <div v-if="state.item.type == 'item'" class="item">
+          <div class="item-label">Title 1:</div>
+          <div class="item-body"><input v-model="state.item.title1"/></div>
+        </div>
+        <div v-if="state.item.type == 'item'" class="item">
+          <div class="item-label">Title 2:</div>
+          <div class="item-body"><input v-model="state.item.title2"/></div>
+        </div>
+        <div v-if="state.item.type == 'item'" class="item">
+          <div class="item-label">Subtitle:</div>
+          <div class="item-body"><input v-model="state.item.subtitle"/></div>
+        </div>
+        <div v-if="state.item.type == 'item'" class="item">
+          <div class="item-label">Image:</div>
+          <div class="item-body"><input v-model="state.item.img_name.url"/></div>
+        </div>
+        <hr />
+        
+        <div v-if="state.item.type == 'item'" v-for="menu in state.item.submenu" 
+          class="item"
+          :key="menu.id"
+        >
+          <div class="item-label">Name:</div>
+          <div class="item-body"><input v-model="menu.name"/></div>
+          <div class="item-label">Price 1:</div>
+          <div class="w-10 item-body"><input v-model="menu.price1"/></div>
+          <div class="item-label">Price 2:</div>
+          <div class="item-body w-10"><input v-model="menu.price2"/></div>
+          <div class="item-label">Border:</div>
+          <div><SliderBtn v-model="menu.border" /></div>
+        </div>
+
+        <!-- Social Info Start -->
+        <div v-if="state.item.type == 'social'" class="item">
+          <div class="item-label">Gmail:</div>
+          <div class="item-body"><input v-model="state.item.social.gmail"/></div>
+        </div>
+        <div v-if="state.item.type == 'social'" class="item">
+          <div class="item-label">Facebook:</div>
+          <div class="item-body"><input v-model="state.item.social.facebook"/></div>
+        </div>
+        <div v-if="state.item.type == 'social'" class="item">
+          <div class="item-label">Instagram:</div>
+          <div class="item-body"><input v-model="state.item.social.instagram"/></div>
+        </div>
+        <div v-if="state.item.type == 'social'" class="item">
+          <div class="item-label">TikTok:</div>
+          <div class="item-body"><input v-model="state.item.social.tiktok"/></div>
+        </div>
+        <div v-if="state.item.type == 'social'" class="item">
+          <div class="item-label">Cell:</div>
+          <div class="item-body"><input v-model="state.item.social.cell"/></div>
+        </div>
+        <!-- Social Info End -->
+        <div class="item">
+          <div class="item-label">Background color:</div>
+          <div class="item-body"><input v-model="state.item.bgcolor"/></div>
+        </div>
+        <div class="item">
+          <button v-if="state.item.type == 'item'" class="btn-blue m-auto w-40" @click="handleAddSubMenu">Add</button>
+          <button class="btn-red m-auto w-40" @click="handleSaveSubMenu">Save</button>
+        </div>
       </div>
-      <div class="item">
-        <div class="item-label">Subtitle:</div>
-        <div class="item-body"><input v-model="state.item.subtitle"/></div>
-      </div>
-      <div class="item">
-        <div class="item-label">Image:</div>
-        <div class="item-body"><input v-model="state.item.img_name"/></div>
-      </div>
-      <hr />
-      <div v-for="menu in state.item.submenu" 
-        class="item"
-        :key="menu.id"
-      >
-        <div class="item-label">Name:</div>
-        <div class="item-body"><input v-model="menu.name"/></div>
-        <div class="item-label">Price 1:</div>
-        <div class="w-10 item-body"><input v-model="menu.price1"/></div>
-        <div class="item-label">Price 2:</div>
-        <div class="item-body w-10"><input v-model="menu.price2"/></div>
-        <div class="item-label">Border:</div>
-        <div><SliderBtn v-model="menu.border" /></div>
-      </div>
-      <div class="item">
-        <button class="btn-blue m-auto w-40" @click="handleAddSubMenu">Add</button>
-        <button class="btn-red m-auto w-40" @click="handleSaveSubMenu">Save</button>
+      <div v-else class="menus">
+        <div v-for="menu in menus" :key="menu">
+          <input :placeholder="menu"/>
+          <button class="btn-red" @click="() => { handleDeleteMenu(menu) }">Delete</button>
+        </div>
+        <div>
+          <input v-model="state.menu"/>
+          <button class="btn-blue" @click="handleAddNewMenu">Add</button>
+        </div>
       </div>
     </div>
   </Modal>
   <Modal :visible="showEditModal" @update:visible="showEditModal = $event">
     <div class="setting">
       <div><h1>Edit Item</h1></div>
-      <div class="item">
+      <!-- Banner Start -->
+      <div v-if="state.editItem.type == 'banner'" class="item">
+        <div class="item-label">Banner:</div>
+        <div class="item-body"><input v-model="state.editItem.banner.content"/></div>
+      </div>
+      <div v-if="state.editItem.type == 'banner'" class="item">
+        <div class="item-label">Font Size:</div>
+        <div class="item-body"><input v-model="state.editItem.banner.fontSize"/></div>
+      </div>
+      <div v-if="state.editItem.type == 'banner'" class="item">
+        <div class="item-label">Font Weight:</div>
+        <div class="item-body"><input v-model="state.editItem.banner.fontWeight"/></div>
+      </div>
+      <div v-if="state.editItem.type == 'banner'" class="item">
+        <div class="item-label">Font Family:</div>
+        <div class="item-body"><input v-model="state.editItem.banner.fontFamily"/></div>
+      </div>
+      <div v-if="state.editItem.type == 'banner'" class="item">
+        <div class="item-label">Font Color:</div>
+        <div class="item-body"><input v-model="state.editItem.banner.fontColor"/></div>
+      </div>
+      <!-- Banner End -->
+
+      <!-- Marquee Start -->
+      <div v-if="state.editItem.type == 'marquee'" class="item">
+        <div class="item-label">Marquee:</div>
+        <div class="item-body"><input v-model="state.editItem.marquee.content"/></div>
+      </div>
+      <div v-if="state.editItem.type == 'marquee'" class="item">
+        <div class="item-label">Font Size:</div>
+        <div class="item-body"><input v-model="state.editItem.marquee.fontSize"/></div>
+      </div>
+      <div v-if="state.editItem.type == 'marquee'" class="item">
+        <div class="item-label">Font Weight:</div>
+        <div class="item-body"><input v-model="state.editItem.marquee.fontWeight"/></div>
+      </div>
+      <div v-if="state.editItem.type == 'marquee'" class="item">
+        <div class="item-label">Font Family:</div>
+        <div class="item-body"><input v-model="state.editItem.marquee.fontFamily"/></div>
+      </div>
+      <div v-if="state.editItem.type == 'marquee'" class="item">
+        <div class="item-label">Font Color:</div>
+        <div class="item-body"><input v-model="state.editItem.marquee.fontColor"/></div>
+      </div>
+      <!-- Marquee End -->
+
+      <div v-if="state.editItem.type == 'item'" class="item">
         <div class="item-label">Title 1:</div>
         <div class="item-body"><input v-model="state.editItem.title1"/></div>
       </div>
-      <div class="item">
+      <div v-if="state.editItem.type == 'item'" class="item">
         <div class="item-label">Title 2:</div>
         <div class="item-body"><input v-model="state.editItem.title2"/></div>
       </div>
-      <div class="item">
+      <div v-if="state.editItem.type == 'item'" class="item">
         <div class="item-label">Subtitle:</div>
         <div class="item-body"><input v-model="state.editItem.subtitle"/></div>
       </div>
-      <div class="item">
+      <div v-if="state.editItem.type == 'item'" class="item">
         <div class="item-label">Image:</div>
         <div class="item-body"><input v-model="state.editItem.img_name"/></div>
       </div>
+      <div v-if="state.editItem.type == 'logo'" class="item">
+        <div class="item-label">Contact:</div>
+        <div class="item-body"><input v-model="state.editItem.phonenumber"/></div>
+      </div>
       <hr />
-      <div v-for="menu in state.editItem.submenu" 
+      <div v-if="state.editItem.type == 'item'" v-for="menu in state.editItem.submenu" 
         class="item"
         :key="menu.id"
       >
@@ -83,8 +243,34 @@
         <div class="item-label">Border:</div>
         <div><SliderBtn v-model="menu.border" /></div>
       </div>
+      <!-- Social Info Start -->
+      <div v-if="state.editItem.type == 'social'" class="item">
+        <div class="item-label">Gmail:</div>
+        <div class="item-body"><input v-model="state.editItem.social.gmail"/></div>
+      </div>
+      <div v-if="state.editItem.type == 'social'" class="item">
+        <div class="item-label">Facebook:</div>
+        <div class="item-body"><input v-model="state.editItem.social.facebook"/></div>
+      </div>
+      <div v-if="state.editItem.type == 'social'" class="item">
+        <div class="item-label">Instagram:</div>
+        <div class="item-body"><input v-model="state.editItem.social.instagram"/></div>
+      </div>
+      <div v-if="state.editItem.type == 'social'" class="item">
+        <div class="item-label">TikTok:</div>
+        <div class="item-body"><input v-model="state.editItem.social.tiktok"/></div>
+      </div>
+      <div v-if="state.editItem.type == 'social'" class="item">
+        <div class="item-label">Cell:</div>
+        <div class="item-body"><input v-model="state.editItem.social.phone"/></div>
+      </div>
+      <!-- Social Info End -->
       <div class="item">
-        <button class="btn-blue m-auto w-40" @click="handleAddEditSubMenu">Add</button>
+        <div class="item-label">Background color:</div>
+        <div class="item-body"><input v-model="state.editItem.bgcolor"/></div>
+      </div>
+      <div class="item">
+        <button v-if="state.editItem.type == 'item'" class="btn-blue m-auto w-40" @click="handleAddEditSubMenu">Add</button>
         <button class="btn-red m-auto w-40" @click="handleUpdateSubMenu">Update</button>
       </div>
     </div>
@@ -97,7 +283,7 @@
         <div><SliderBtn v-model="isDark" /></div>
       </div>
       <div class="item">
-        <div class="w-40 item-label">Draggable</div>
+        <div class="w-40 item-label">Enable to Edit</div>
         <div><SliderBtn v-model="isDraggable" /></div>
       </div>
     </div>
@@ -109,16 +295,26 @@ import { ref, watch, onMounted, computed, reactive } from 'vue'
 import Modal from '../ui/Modal.vue';
 import SliderBtn from '../ui/SliderBtn.vue';
 import { useStore } from 'vuex';
+import ImageUpload from '../ui/ImageUpload.vue'
+import { useRouter } from 'vue-router';
 
+const router = useRouter()
 const store = useStore();
 const isDraggable = ref(store.getters.getDraggable)
+const menus = computed(() => store.state.menus)
 const isEdit = computed(() => store.state.isEdit)
 const showModal = ref(false)
 const showAddModal = ref(false)
 const showEditModal = ref(false)
 const isDark = ref(store.getters.getDark)
 
+const selMenu = computed(() => {
+  return router.currentRoute.value.query.id
+})
+
 const state = reactive({
+  selMenu: "",
+  menu: "",
   item: {
     title1: "",
     title2: "",
@@ -133,7 +329,11 @@ const state = reactive({
       h: 200
     },
     submenu: [],
-    img_name: ""
+    img_name: {},
+    phonenumber: "",
+    social: {},
+    banner: {},
+    marquee: {}
   },
   editItem: {
     title1: "",
@@ -149,15 +349,20 @@ const state = reactive({
       h: 200
     },
     submenu: [],
-    img_name: ""
+    img_name: {},
+    social: {},
+    banner: {},
+    marquee: {}
   }
 })
+
 watch(isDraggable, () => {
   store.dispatch('setDraggable', isDraggable.value)
 })
 
 onMounted(() => {
   changeTheme(isDark.value)
+  store.dispatch('getMenus')
 })
 
 const setBgColorDark = () => {
@@ -212,6 +417,10 @@ const handleAddEditSubMenu = () => {
   })
 }
 
+const handleAddNewMenu = () => {
+  store.dispatch('addMenu', state.menu)
+}
+
 const handleSaveSubMenu = () => {
   store.dispatch('saveFood', { ...state.item, id: Date.now() })
 }
@@ -220,12 +429,23 @@ const handleUpdateSubMenu = () => {
   store.dispatch('updateFood', { ...state.editItem })
 }
 
+const handleChangeType = (e) => {
+}
+
+const handleDeleteMenu = (menu) => {
+  store.dispatch('deleteMenu', menu)
+}
+
 watch(isEdit, () => {
   if(isEdit.value.id) {
-    console.log(isEdit.value.item)
     showEditModal.value = true
     state.editItem = isEdit.value.item
   }
+})
+
+watch(selMenu, () => {
+  store.dispatch('changeSelMenu', selMenu.value)
+  state.selMenu = selMenu.value
 })
 
 watch(isDark, changeTheme)
@@ -235,6 +455,15 @@ watch(isDark, changeTheme)
 .setting
   display: flex
   flex-direction: column
+  .menus
+    display: flex
+    flex-direction: column
+    input
+      width: 50%
+      margin: 1rem
+    button
+      width: 20%
+      margin: 1rem
   h1
     text-align: center
   .item
@@ -250,6 +479,8 @@ watch(isDark, changeTheme)
       width: 80%
       input
         width: 100%
+    select
+      width: 100%
 .mr-1
   margin-right: 1rem
 .mt-1
@@ -275,4 +506,7 @@ header
     justify-items: center
     align-items: center
     gap: 1rem
+    .active
+      color: red
+
 </style>

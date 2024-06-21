@@ -1,5 +1,6 @@
 import { createStore } from 'vuex';
 import _ from 'lodash'
+import axios from 'axios'
 
 const logo = {
   "id": 0,
@@ -29,10 +30,16 @@ const store = createStore({
       state.isDark = payload
     },
     setDraggable(state, payload) {
-      console.log("m", payload)
       state.isDraggable = payload
     },
-    save(state) {
+    async save(state) {
+      try {
+        const response = await axios.post(`http://localhost:8000/api/v1/save`, { menu: state.selectedMenu, data: state.foods})
+      } catch (error) {
+        console.log(error.message)
+      } finally {
+
+      }
       localStorage.setItem(`menu${state.selectedMenu}`, JSON.stringify(state.foods))
     },
     load(state) {
@@ -53,6 +60,24 @@ const store = createStore({
     updateFood(state, payload) {
       state.foods = state.foods.map(item => item.id != payload.id ? item: payload )
       localStorage.setItem(`menu${state.selectedMenu}`, JSON.stringify(state.foods))
+    },
+    SET_MENUS(state, payload) {
+      state.menus = payload
+    },
+    ADD_MENU(state, payload) {
+      state.menus.push(payload)
+    },
+    DELETE_MENUS(state, payload) {
+      state.menus = state.menus.filter(item => item != payload)
+    },
+    UPDATE_MENU(state, payload) {
+      state.menus = state.menus.map(item => item == payload.old ? payload.new : item)
+    },
+    CHANGE_SEL_MENU(state, payload) {
+      state.selectedMenu = payload
+    },
+    GET_FOOD(state, payload) {
+      state.foods = payload
     }
   },
   actions: {
@@ -79,6 +104,58 @@ const store = createStore({
     },
     updateFood({ commit }, payload) {
       commit('updateFood', payload)
+    },
+    async changeSelMenu({ commit }, payload) {
+      commit('CHANGE_SEL_MENU', payload)
+      try {
+        const response = await axios.get(`http://localhost:8000/api/v1/menus/${payload}`);
+        commit('GET_FOOD', response.data);
+      } catch (error) {
+        console.log(error.message)
+        commit('GET_FOOD', []);
+      } finally {
+
+      }
+    },
+    async addMenu({ commit }, payload) {
+      try {
+        const response = await axios.post('http://localhost:8000/api/v1/menus', { menu: payload });
+        commit('ADD_MENU', payload);
+      } catch (error) {
+        console.log(error.message)
+      } finally {
+
+      }
+    },
+    async getMenus({ commit }, payload) {
+      try {
+        const response = await axios.get('http://localhost:8000/api/v1/menus');
+        commit('SET_MENUS', response.data);
+      } catch (error) {
+        console.log(error.message)
+      } finally {
+
+      }
+    },
+    async deleteMenu({ commit }, payload) {
+      try {
+        const response = await axios.delete('http://localhost:8000/api/v1/menus/' + payload);
+        commit('DELETE_MENUS', payload);
+      } catch (error) {
+        console.log(error.message)
+      } finally {
+
+      }
+    },
+    async updateMenu({ commit }, payload) {
+      try {
+        const response = await axios.patch('http://localhost:8000/api/v1/menus/' + payload.old);
+        commit('UPDATE_MENUS', payload);
+      } catch (error) {
+        console.log(error.message)
+      } finally {
+
+      }
     }
   },
   getters: {
@@ -90,6 +167,9 @@ const store = createStore({
     },
     getEdit(state) {
       return state.isEdit
+    },
+    getMenus(state) {
+      return state.menus
     }
   },
 });

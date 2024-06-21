@@ -1,6 +1,6 @@
 <template>
   <div ref="draggable" 
-    :class="isDraggable ? 'draggable border-shadow' : 'draggable'" 
+    :class="isDraggable ? 'draggable border-shadow' : `draggable ${state.isClick ? 'border' : ''}`" 
     :key="id" 
     :style="{
       transform: `translate(${initPos.x}px, ${initPos.y}px)`,
@@ -9,19 +9,21 @@
       height: `${initSize.h}px`,
     }" 
     :data-x="initPos.x" 
-    :data-y="initPos.y">
+    :data-y="initPos.y"
+    @click="handleClick"
+    >
     <div v-if="isSold.value" class="sold"></div>
     <div v-if="isDraggable" class="overlay">
       <button class="btn-red" @click="handleDelete">Delete</button>
       <button class="btn-red" @click="handleEdit">Edit</button>
-      <button class="btn-red" @click="handleSold">Sold</button>
+      <button v-if="item.type == 'item'" :class="isSold.value ? 'btn-red' : 'btn-blue'" @click="handleSold">Sold</button>
     </div>
     <slot></slot>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, defineProps, toRefs, computed } from 'vue';
+import { ref, onMounted, onUnmounted, defineProps, toRefs, computed, watch, reactive } from 'vue';
 import interact from 'interactjs';
 import { useStore } from 'vuex';
 
@@ -60,6 +62,18 @@ const isDraggable = computed(() => store.state.isDraggable);
 const isSold = computed(() => sold)
 
 onMounted(() => {
+  initDraggable()
+});
+
+const state = reactive({
+  isClick: false
+})
+
+const handleClick = () => {
+  state.isClick = !state.isClick
+}
+
+const initDraggable = () => {
   const ele = interact(draggable.value)
     .draggable({
       inertia: false,
@@ -141,7 +155,7 @@ onMounted(() => {
 
       inertia: false
     });
-});
+}
 
 onUnmounted(() => {
   if (draggable.value) {
@@ -161,13 +175,19 @@ const handleDelete = () => {
   store.dispatch('deleteFood', { id: item.value.id })
 }
 
+watch(isDraggable, () => {
+  if(isDraggable.value == true) {
+    initDraggable()
+  } else 
+    interact(draggable.value).unset();
+})
 </script>
 
 <style scoped>
 .draggable {
   position: fixed;
   display: flex;
-  min-width: 200px;
+  min-width: 100px;
   min-height: 50px;
   padding: 1.2rem;
   color: black;
@@ -183,6 +203,10 @@ const handleDelete = () => {
 .draggable .overlay button {
   padding: 0.1rem;
   margin-right: 0.1rem;
+}
+
+.border {
+  border: 1px solid rgb(255, 100, 100);
 }
 
 .border-shadow {
