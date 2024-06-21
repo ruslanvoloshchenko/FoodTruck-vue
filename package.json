@@ -11,9 +11,14 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@interactjs/interact": "^1.10.27",
+    "interactjs": "^1.10.27",
+    "lodash": "^4.17.21",
     "normalize.css": "^8.0.1",
     "vue": "^3.4.21",
-    "vue-router": "^4.3.0"
+    "vue-interact": "^1.0.0",
+    "vue-router": "^4.3.0",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",

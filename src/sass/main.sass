@@ -2,7 +2,7 @@
 @use './components/components.sass'
 
 @mixin container
-  max-width: 1280px
+  max-width: 95%
   margin: 0 auto
   padding-inline: 2rem
   width: 100%
@@ -24,7 +24,7 @@ body
   @include container
   > *
     margin-bottom: 0.5rem
-    background-color: var(--color-background)
+    // background-color: var(--color-background)
     @include box-shadow
   
   main
@@ -51,6 +51,6 @@ a, .green
 //     padding: 0 2rem
 //     gap: 2rem
 
-@media (max-width: 1024px)
+@media (max-width: 1280px)
   #app
     padding-inline: 0.5rem

@@ -1,77 +1,148 @@
-<script setup>
-import { ref, watch, onMounted } from 'vue'
-import SliderBtn from '@/components/ui/SliderBtn.vue'
-
-const isChecked = ref(false)
-
-let mql
-
-onMounted(() => {
-  mql = window.matchMedia('(prefers-color-scheme: dark)')
-  if (mql.matches) {
-    isChecked.value = true
-  } else {
-    isChecked.value = false
-  }
-})
-
-const setBgColorDark = () => {
-  document.body.style.setProperty('--color-background', 'var(--vt-c-black)')
-  document.body.style.setProperty('--color-background-soft', 'var(--vt-c-black-soft)')
-  document.body.style.setProperty('--color-background-mute', 'var(--vt-c-black-mute)')
-  document.body.style.setProperty('--color-border', 'var(--vt-c-divider-dark-2)')
-  document.body.style.setProperty('--color-border-hover', 'var(--vt-c-divider-dark-1)')
-  document.body.style.setProperty('--color-heading', 'var(--vt-c-text-dark-1)')
-  document.body.style.setProperty('--color-text', 'var(--vt-c-text-dark-2)')
-}
-
-const setBgColorLight = () => {
-  document.body.style.setProperty('--color-background', 'var(--vt-c-white)')
-  document.body.style.setProperty('--color-background-soft', 'var(--vt-c-white-soft)')
-  document.body.style.setProperty('--color-background-mute', 'var(--vt-c-white-mute)')
-  document.body.style.setProperty('--color-border', 'var(--vt-c-divider-light-2)')
-  document.body.style.setProperty('--color-border-hover', 'var(--vt-c-divider-light-1)')
-  document.body.style.setProperty('--color-heading', 'var(--vt-c-text-light-1)')
-  document.body.style.setProperty('--color-text', 'var(--vt-c-text-light-2)')
-}
-watch(isChecked, (value) => {
-  if (value) {
-    setBgColorDark()
-  } else {
-    setBgColorLight()
-  }
-})
-</script>
-
 <template>
   <div class="home">
-    <div>
-      <h1>H1 Headers</h1>
-      <h2>H2 Headers</h2>
-      <h3>H3 Headers</h3>
-      <h4>H4 Headers</h4>
-      <h5>H5 Headers</h5>
-    </div>
-    <div class="slider">
-      <SliderBtn v-model="isChecked" />
-      <span>{{ isChecked ? 'dark-theme' : 'light-theme' }}</span>
-    </div>
-    <div>
-      <button class="btn-blue">Action</button>
-      <button class="btn-green">Accept</button>
-      <button class="btn-red">Delete</button>
-      <button class="btn-gray">Reset</button>
-    </div>
+    <Draggable 
+      v-for="menu in menus"
+      :key="menu.id"
+      :id="menu.type=='logo' ? 'logo' : `item${menu.id}`"
+      :canResize="true"
+      :initPos="menu.initPos"
+      :initSize="menu.initSize"
+      :class="menu.type=='logo' ? 'logo' : ''"
+      :sold="menu.sold"
+      :item="menu"
+      >
+      <div v-if="menu.type=='logo'">
+        <div>
+          <img :src="logo" class="img"/>
+        </div>
+        <div class="label-menu">
+          <span>= Menu =</span>
+        </div>
+        <div class="label-contact"> 
+          <span>CALL US: </span><EditableInput :content="menu.phonenumber" />
+        </div>
+      </div>
+      <div v-if="menu.type=='item'" class="item">
+        <div>
+          <EditableInput class="title1" :content="menu.title1" />&nbsp;
+          <EditableInput class="title2" :content="menu.title2" />&nbsp;
+          <EditableInput class="subtitle" 
+            v-if="menu.subtitle" :content="`(${menu.subtitle})`" />
+        </div>
+        <div class="subitem">
+          <div class="body">
+            <div 
+              v-for="submenu in menu.submenu"
+              :key="`subitem-${menu.id}-${submenu.id}`"
+              >
+              <div class="content">
+                <EditableInput :content="submenu.name" />
+                <div>
+                  $<EditableInput :content="submenu.price1" />
+                  <span v-if="submenu.price2">/ $</span>
+                  <EditableInput v-if="submenu.price2" :content="submenu.price2" />
+                </div>
+              </div>
+              <div v-if="submenu.border" class="dotted-border"></div>
+            </div>
+          </div>
+          <div v-if="menu.img_name" class="img">
+            <img :src="logo"/>
+          </div>
+        </div>
+      </div>
+    </Draggable>
   </div>
 </template>
 
 <style lang="sass" scoped>
 .home
   display: flex
-  flex-direction: column
+  height: 80vh
   gap: 1rem
-
-  .slider
+  .item
     display: flex
-    gap: 1rem
+    flex-direction: column
+    width: 100%
+    .content
+      display: flex
+      justify-content: space-between
+    .title1
+      color: #de6744
+      font-weight: 700
+      font-size: 2rem
+    .title2
+      color: black
+      font-weight: 700
+      font-size: 2rem
+    .subtitle
+      color: black
+      font-weight: 700
+      font-size: 1rem
+    .subitem
+      display: flex
+      justify-content: space-between
+      width: 100%
+      .body
+        width: 100%
+      .img
+        width: 50%
+        position: relative
+        top: -1rem
+        display: flex
+        justify-content: right
+        align-items: center
+        img
+          width: 70%
+        
+  .logo
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
+    background-color: rgb(15, 15, 15)
+    .label-menu
+      text-align: center
+      span
+        color: rgb(215, 50, 40)
+        font-size: 2rem
+        font-weight: 700
+    .label-contact
+      margin-bottom: 2rem
+      text-align: center
+      span
+        color: white
+        font-size: 1rem
+    img
+      width: 15rem
+      height: 15rem
+      margin: 0 3rem
+</style>
+
+<script setup>
+import Draggable from '@/components/ui/Draggable.vue';
+import logo from '@/assets/logo.png'
+import EditableInput from '@/components/ui/EditableInput.vue'
+import { watch, computed, ref } from 'vue';
+import { useStore } from 'vuex';
+
+const store = useStore()
+
+const foods = computed(() => store.state.foods)
+
+const menus = ref(foods.value)
+
+watch(foods, () => {
+  menus.value = foods.value
+})
+</script>
+
+<style>
+.dotted-border {
+  width: 80%;
+  border-bottom: 3px dotted #333; /* Dotted left border */
+  background-color: #f0f0f0; /* Background color */
+  color: #333; /* Text color */
+  font-size: 0.5rem; /* Font size */
+}
 </style>
