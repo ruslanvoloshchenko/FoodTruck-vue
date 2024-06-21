@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home mt-3">
     <Draggable 
       v-for="menu in menus"
       :key="menu.id"
@@ -102,6 +102,8 @@
 </template>
 
 <style lang="sass" scoped>
+.mt-3
+  margin-top: 3rem
 .home
   display: flex
   height: 80vh

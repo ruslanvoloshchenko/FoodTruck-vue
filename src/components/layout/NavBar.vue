@@ -1,16 +1,18 @@
 <template>
-  <header class="mt-1">
+  <header :class="state.isPreview == 1 ? 'mt-1 hidden' : 'mt-1'">
     <nav>
       <router-link v-for="menu in menus" :to="`/?id=${menu}`">
         <span :class="state.selMenu == menu ? 'active' : ''">{{ menu }}</span>
       </router-link>
     </nav>
     <div>
+      <button class="btn-blue mr-1" @click="handlePublish">Publish</button>
       <button v-if="isDraggable" class="btn-red mr-1" @click="handleSave">Save</button>
       <button v-if="isDraggable" class="btn-green mr-1" @click="showAddModal=true">Add</button>
       <button class="btn-blue" @click="showModal=true">Setting</button>
     </div>
   </header>
+  <div :style="{ marginTop: state.isPreview == 1 ? '3rem' : '0rem'}"></div>
   <Modal :visible="showAddModal" @update:visible="showAddModal = $event">
     <div class="setting">
       <div><h1>Add New Items</h1></div>
@@ -278,12 +280,12 @@
   <Modal :visible="showModal" @update:visible="showModal = $event">
     <div class="setting">
       <div><h1>Settings</h1></div>
-      <div class="item">
+      <!-- <div class="item">
         <div class="w-40 item-label">Change theme</div>
         <div><SliderBtn v-model="isDark" /></div>
-      </div>
+      </div> -->
       <div class="item">
-        <div class="w-40 item-label">Enable to Edit</div>
+        <div class="w-40 item-label">Enable to Edit(Preview)</div>
         <div><SliderBtn v-model="isDraggable" /></div>
       </div>
     </div>
@@ -312,7 +314,12 @@ const selMenu = computed(() => {
   return router.currentRoute.value.query.id
 })
 
+const isPreview = computed(() => {
+  return router.currentRoute.value.query.ispreview || 0
+})
+
 const state = reactive({
+  isPreview: 0,
   selMenu: "",
   menu: "",
   item: {
@@ -436,6 +443,10 @@ const handleDeleteMenu = (menu) => {
   store.dispatch('deleteMenu', menu)
 }
 
+const handlePublish = () => {
+  router.push(`/?id=${selMenu.value}&ispreview=1`)
+}
+
 watch(isEdit, () => {
   if(isEdit.value.id) {
     showEditModal.value = true
@@ -449,9 +460,18 @@ watch(selMenu, () => {
 })
 
 watch(isDark, changeTheme)
+
+watch(isPreview, () => {
+  if(isPreview.value == 1) {
+    state.isPreview = 1
+    store.dispatch('setDraggable', false)
+  }
+})
 </script>
 
 <style lang="sass" scoped>
+.hidden
+  display: none
 .setting
   display: flex
   flex-direction: column
