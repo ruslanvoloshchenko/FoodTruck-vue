@@ -49,6 +49,10 @@ npm run dev
 
 ```bash
 npm run build
+
+docker build --tag foodtruck/app .
+
+docker run -p -d 80:8000 foodtruck/app --name foodtruck
 ```
 
 ## Contributing
