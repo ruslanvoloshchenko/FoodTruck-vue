@@ -1,5 +1,5 @@
 <template>
-  <div class="home mt-3">
+  <div class="home">
     <Draggable 
       v-for="menu in menus"
       :key="menu.id"
@@ -12,7 +12,7 @@
       :item="menu"
       :style="{
         backgroundColor: menu.type == 'image' ? 'transparent' :
-        menu.bgcolor ? menu.bgcolor : '#f8f8f8'}"
+        menu.bgcolor ? menu.bgcolor : 'transparent'}"
       >
 
       <div v-if="menu.type== 'logo'">
