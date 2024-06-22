@@ -42,7 +42,7 @@ export default {
       formData.append('image', selectedFile.value);
 
       try {
-        const response = await fetch('http://localhost:8000/upload', {
+        const response = await fetch('http://localhost/upload', {
           method: 'POST',
           body: formData,
         });

@@ -34,7 +34,7 @@ const store = createStore({
     },
     async save(state) {
       try {
-        const response = await axios.post(`http://localhost:8000/api/v1/save`, { menu: state.selectedMenu, data: state.foods})
+        const response = await axios.post(`http://localhost/api/v1/save`, { menu: state.selectedMenu, data: state.foods})
       } catch (error) {
         console.log(error.message)
       } finally {
@@ -108,7 +108,7 @@ const store = createStore({
     async changeSelMenu({ commit }, payload) {
       commit('CHANGE_SEL_MENU', payload)
       try {
-        const response = await axios.get(`http://localhost:8000/api/v1/menus/${payload}`);
+        const response = await axios.get(`http://localhost/api/v1/menus/${payload}`);
         commit('GET_FOOD', response.data);
       } catch (error) {
         console.log(error.message)
@@ -119,7 +119,7 @@ const store = createStore({
     },
     async addMenu({ commit }, payload) {
       try {
-        const response = await axios.post('http://localhost:8000/api/v1/menus', { menu: payload });
+        const response = await axios.post('http://localhost/api/v1/menus', { menu: payload });
         commit('ADD_MENU', payload);
       } catch (error) {
         console.log(error.message)
@@ -129,7 +129,7 @@ const store = createStore({
     },
     async getMenus({ commit }, payload) {
       try {
-        const response = await axios.get('http://localhost:8000/api/v1/menus');
+        const response = await axios.get('http://localhost/api/v1/menus');
         commit('SET_MENUS', response.data);
       } catch (error) {
         console.log(error.message)
@@ -139,7 +139,7 @@ const store = createStore({
     },
     async deleteMenu({ commit }, payload) {
       try {
-        const response = await axios.delete('http://localhost:8000/api/v1/menus/' + payload);
+        const response = await axios.delete('http://localhost/api/v1/menus/' + payload);
         commit('DELETE_MENUS', payload);
       } catch (error) {
         console.log(error.message)
@@ -149,7 +149,7 @@ const store = createStore({
     },
     async updateMenu({ commit }, payload) {
       try {
-        const response = await axios.patch('http://localhost:8000/api/v1/menus/' + payload.old);
+        const response = await axios.patch('http://localhost/api/v1/menus/' + payload.old);
         commit('UPDATE_MENUS', payload);
       } catch (error) {
         console.log(error.message)
