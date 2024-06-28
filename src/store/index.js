@@ -48,6 +48,7 @@ const store = createStore({
     },
     saveFood(state, payload) {
       state.foods = [...state.foods, payload]
+      payload.callback()
       localStorage.setItem(`menu${state.selectedMenu}`, JSON.stringify(state.foods))
     },
     deleteFood(state, payload) {

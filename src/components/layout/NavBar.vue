@@ -99,10 +99,10 @@
           <div class="item-label">Subtitle:</div>
           <div class="item-body"><input v-model="state.item.subtitle"/></div>
         </div>
-        <div v-if="state.item.type == 'item'" class="item">
+        <!-- <div v-if="state.item.type == 'item'" class="item">
           <div class="item-label">Image:</div>
           <div class="item-body"><input v-model="state.item.img_name.url"/></div>
-        </div>
+        </div> -->
         <hr />
         
         <div v-if="state.item.type == 'item'" v-for="menu in state.item.submenu" 
@@ -223,10 +223,10 @@
         <div class="item-label">Subtitle:</div>
         <div class="item-body"><input v-model="state.editItem.subtitle"/></div>
       </div>
-      <div v-if="state.editItem.type == 'item'" class="item">
+      <!-- <div v-if="state.editItem.type == 'item'" class="item">
         <div class="item-label">Image:</div>
         <div class="item-body"><input v-model="state.editItem.img_name"/></div>
-      </div>
+      </div> -->
       <div v-if="state.editItem.type == 'logo'" class="item">
         <div class="item-label">Contact:</div>
         <div class="item-body"><input v-model="state.editItem.phonenumber"/></div>
@@ -318,7 +318,7 @@ const isPreview = computed(() => {
   return router.currentRoute.value.query.ispreview || 0
 })
 
-const state = reactive({
+const initialValue = {
   isPreview: 0,
   selMenu: "",
   menu: "",
@@ -361,7 +361,9 @@ const state = reactive({
     banner: {},
     marquee: {}
   }
-})
+}
+
+const state = reactive(initialValue)
 
 watch(isDraggable, () => {
   store.dispatch('setDraggable', isDraggable.value)
@@ -425,11 +427,33 @@ const handleAddEditSubMenu = () => {
 }
 
 const handleAddNewMenu = () => {
-  store.dispatch('addMenu', state.menu)
+  store.dispatch('addMenu', { ...state.menu })
 }
 
 const handleSaveSubMenu = () => {
-  store.dispatch('saveFood', { ...state.item, id: Date.now() })
+  store.dispatch('saveFood', { ...state.item, id: Date.now(), callback: () => {
+    alert()
+    state.item = {
+      title1: "",
+      title2: "",
+      subtitle: "",
+      type: "item",
+      initPos: {
+        x: 100,
+        y: 100
+      },
+      initSize: {
+        w: 200,
+        h: 200
+      },
+      submenu: [],
+      img_name: {},
+      phonenumber: "",
+      social: {},
+      banner: {},
+      marquee: {}
+    }
+  } })
 }
 
 const handleUpdateSubMenu = () => {

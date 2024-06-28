@@ -51,9 +51,9 @@
               <div v-if="submenu.border" class="dotted-border"></div>
             </div>
           </div>
-          <div v-if="menu.img_name" class="img">
+          <!-- <div v-if="menu.img_name" class="img">
             <img :src="logo"/>
-          </div>
+          </div> -->
         </div>
       </div>
 
