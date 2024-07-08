@@ -18,7 +18,7 @@ RUN npm install
 RUN npm run build
 
 # Expose the port the app runs on
-EXPOSE 8000
+EXPOSE 80
 
 # Define the command to run the application
 CMD ["node", "server.js"]
