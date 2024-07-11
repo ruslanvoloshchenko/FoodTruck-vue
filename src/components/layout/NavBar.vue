@@ -1,8 +1,8 @@
 <template>
   <header :class="state.isPreview == 1 ? 'mt-1 hidden' : 'mt-1'">
     <nav>
-      <router-link v-for="menu in menus" :to="`/?id=${menu}`">
-        <span :class="state.selMenu == menu ? 'active' : ''">{{ menu }}</span>
+      <router-link v-for="menu in menus" :to="`/?id=${menu.label}`">
+        <span :class="state.selMenu == menu.label ? 'active' : ''">{{ menu.label }}</span>
       </router-link>
     </nav>
     <div>
@@ -22,7 +22,7 @@
           <select v-model="state.item.type" @change="handleChangeType">
             <option value="social">Social</option>
             <option value="item">Food</option>
-            <option value="logo">Logo</option>
+            <!-- <option value="logo">Logo</option> -->
             <option value="banner">Banner</option>
             <option value="marquee">Marquee</option>
             <option value="image">Image</option>
@@ -151,11 +151,14 @@
         </div>
       </div>
       <div v-else class="menus">
-        <div v-for="menu in menus" :key="menu">
-          <input :placeholder="menu"/>
-          <button class="btn-red" @click="() => { handleDeleteMenu(menu) }">Delete</button>
+        <div v-for="menu in menus" :key="menu.label" class="d-flex">
+          <input :placeholder="menu.label" v-model="menu.text" />
+          <button class="btn-blue m-0" @click="() => { handleCopyMenu(menu) }">Copy</button>
+          <button class="btn-red m-0" @click="() => { handleDeleteMenu(menu) }">Delete</button>
+          <button class="btn-red m-0" @click="() => { handleUpdateMenu(menu) }">Update</button>
         </div>
-        <div>
+        <hr />
+        <div class="d-flex">
           <input v-model="state.menu"/>
           <button class="btn-blue" @click="handleAddNewMenu">Add</button>
         </div>
@@ -322,6 +325,7 @@ const initialValue = {
   isPreview: 0,
   selMenu: "",
   menu: "",
+  strMenu: "",
   item: {
     title1: "",
     title2: "",
@@ -464,7 +468,15 @@ const handleChangeType = (e) => {
 }
 
 const handleDeleteMenu = (menu) => {
-  store.dispatch('deleteMenu', menu)
+  store.dispatch('deleteMenu', menu.label);
+}
+
+const handleUpdateMenu = (menu) => {
+  store.dispatch('updateMenu', menu)
+}
+
+const handleCopyMenu = (menu) => {
+  store.dispatch('copyMenu', menu.label)
 }
 
 const handlePublish = () => {
@@ -494,8 +506,24 @@ watch(isPreview, () => {
 </script>
 
 <style lang="sass" scoped>
+.d-flex
+  display: flex
 .hidden
   display: none
+.m-0
+  margin: 0
+.mr-1
+  margin-right: 1rem
+.mt-1
+  margin-top: 1rem
+.m-auto
+  margin: auto
+.w-40
+  width: 40%!important
+.w-10
+  width: 10%!important
+.w-90
+  width: 90%
 .setting
   display: flex
   flex-direction: column
@@ -525,18 +553,7 @@ watch(isPreview, () => {
         width: 100%
     select
       width: 100%
-.mr-1
-  margin-right: 1rem
-.mt-1
-  margin-top: 1rem
-.m-auto
-  margin: auto
-.w-40
-  width: 40%!important
-.w-10
-  width: 10%!important
-.w-90
-  width: 90%
+
 header
   width: 100%
   padding-block: 1rem

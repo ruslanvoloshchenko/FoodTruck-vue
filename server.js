@@ -110,6 +110,28 @@ app.post('/api/v1/menus', (req, res) => {
     });
 })
 
+app.patch('/api/v1/menus/:old/:newone', (req, res) => {
+    console.log(req.params)
+    const { old, newone } = req.params
+    if(newone == null || newone == "" || newone == undefined) {
+        return
+    }
+    const oldPath = path.join('./data/', old);
+    const newPath = path.join('./data/', newone);
+
+    fs.rename(oldPath, newPath, (err) => {
+        if(err) {
+            if (err.code === 'ENOENT') {
+                // File does not exist
+                return res.status(404).send('File not found');
+            }
+            // Other errors
+            return res.status(500).send('Error deleting file: ' + err.message);
+        }
+        res.json({ menu: req.params })
+    })
+})
+
 app.delete('/api/v1/menus/:id', (req, res) => {
     const filePath = path.join('./data/', req.params.id);
 
@@ -124,6 +146,23 @@ app.delete('/api/v1/menus/:id', (req, res) => {
         }
 
         res.json({ status: 200 })
+    });
+})
+
+app.post('/api/v1/menus/:id/copy', (req, res) => {
+    let { id } = req.params
+    const filePath = path.join('./data/', id);
+    const newFileName = `${id}-copy-${Date.now()}`;
+    const newPath = path.join('./data/', newFileName);
+    fs.copyFile(filePath, newPath, (err) => {
+        if(err) {
+            if (err.code === 'ENOENT') {
+                // File does not exist
+                return res.status(404).send('File not found');
+            }
+            return res.status(500).send('Error deleting file: ' + err.message);
+        }
+        res.json({ menu: newFileName });
     });
 })
 

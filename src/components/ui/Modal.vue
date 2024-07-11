@@ -42,8 +42,8 @@ const close = () => {
   padding: 20px;
   border-radius: 8px;
   position: relative;
-  min-width: 600px;
-  min-height: 400px;
+  min-width: 800px;
+  min-height: 600px;
 }
 
 .modal-close {
